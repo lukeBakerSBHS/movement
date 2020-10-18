@@ -1,0 +1,156 @@
+<!doctype html>
+
+<body>
+    <canvas id="gameCanvas" width="600" height="600">
+    </canvas>
+    <script>
+        var canvas, canvasContext;
+
+        window.onload = function() {
+            canvas = document.getElementById('gameCanvas');
+            canvasContext = canvas.getContext('2d');
+
+            document.addEventListener('keydown', keyPressed);
+            document.addEventListener('keyup', keyReleased);
+            
+            
+
+            setInterval(mainloop, 1000 / 50);
+
+        }
+
+        var playerXpos = 290;
+        var playerYpos = 500;
+        const PlAYER_SIZE = 20;
+        var playerXspeed = 5;
+        var playerYspeed = 5;
+        
+        var score = 0;
+        
+//        var enemy1Xpos = 1;
+//        var enemy1Ypos = 1;
+//        const ENEMY1_SIZE = 20;
+//        var enemy1Xspeed= 5;
+//        var enemy1Yspeed= 5;
+//        
+        var enemies =[];
+
+        const LEFT_KEY = 65;
+        const RIGHT_KEY = 68;
+
+        var leftkeyPressed = false;
+        var rightkeyPressed = false;
+        
+        var startingPos = true;
+        var totalEnemies = 7;
+
+        function mainloop() { //mainloop were you want stuff on screen.
+
+            colorRect(0,0,canvas.width, canvas.height, 'black'); // background that youll be palying on
+            
+            if(startingPos){
+                for(var i = 0; i < totalEnemies; i++){
+                    makeEnemy();
+                }
+                startingPos = false;
+            }
+
+            colorRect(playerXpos, playerYpos, PlAYER_SIZE, PlAYER_SIZE, 'red'); //the charcter youll be playing in the game
+//            colorRect(enemy1Xpos, enemy1Ypos, PlAYER_SIZE, ENEMY1_SIZE, 'blue'); //the charcter youll be playing in the game
+
+            if (startingPos) {
+                startPos();
+                console.log('here')
+                startingPos = false;
+            }
+            playerMove();
+            drawEnemies();
+            moveEnemies();
+        } // end func
+
+        function keyPressed(evt) {
+
+            if (evt.keyCode == LEFT_KEY) {
+                leftkeyPressed = true;
+            }
+            if (evt.keyCode == RIGHT_KEY) {
+                rightkeyPressed = true;
+            }
+        } //end func
+
+        function keyReleased(evt) {
+            if (evt.keyCode == LEFT_KEY) {
+                leftkeyPressed = false;
+            }
+            if (evt.keyCode == RIGHT_KEY) {
+                rightkeyPressed = false;
+            }
+        } //end func
+        
+            
+
+        function playerMove() {//player 
+            if (rightkeyPressed) { // rightkeypressed 
+                playerXpos += playerXspeed;
+            }
+            if (leftkeyPressed) { // leftkeyPressed 
+                playerXpos -= playerXspeed;
+            }
+
+        } // end func
+        
+        var enemycounter = 0;
+        
+        function makeEnemy(){
+            //var enemyPos = Math.floor(Math.random()*7) + 1;
+            const ENEMY_SIZE = 20;
+            const gap = 30;
+            var enemyXpos = enemycounter * ENEMY_SIZE + gap * enemycounter;
+            var enemyYpos = 0;
+            var enemyXspeed = Math.floor(Math.random()*(10 - 3)) + 3;
+            var enemyYspeed = Math.floor(Math.random()*(5 - 2)) + 2;
+            
+            enemycounter++;
+            
+            var enemy = {
+                enemyXpos: enemyXpos,
+                enemyYpos: enemyYpos,
+                ENEMY_SIZE: ENEMY_SIZE,
+                enemyXspeed: enemyXspeed,
+                enemyYspeed: enemyYspeed
+            }
+             
+            
+            enemies.push(enemy);
+        }
+            
+         function drawEnemies(){
+             enemies.forEach(function(enemy,i,array){
+                 colorRect(enemy.enemyXpos,enemy.enemyYpos,enemy.ENEMY_SIZE,enemy.ENEMY_SIZE,'red');
+             });
+         }   
+  
+        function moveEnemies(){
+            enemies.forEach(function(enemy,i,array){
+                 enemy.enemyYpos += enemy.enemyYspeed;
+                
+                if(enemy.enemyYpos > canvas.height){
+                   enemy.enemyYpos = 0;
+                }
+                
+             });
+            
+        }
+
+        function startPos() {
+            playerXpos = canvas.width / 2 - PlAYER_SIZE / 2;
+            playerYpos = canvas.height * 0.8;
+        }
+
+        function colorRect(x, y, w, h, c) {
+            canvasContext.fillStyle = c;
+            canvasContext.fillRect(x, y, w, h);
+        }
+
+    </script>
+</body>

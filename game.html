@@ -18,6 +18,13 @@
             setInterval(mainloop, 1000 / 50);
 
         }
+        
+        //bullet
+        var bulletXpos = 0;
+        var bulletYpos = 0;
+        const BULLET_WIDTH = 4;
+        const BULLET_HIGHT = 6;
+        var bulletYspeed = 10;
 
         var playerXpos = 290;
         var playerYpos = 500;
@@ -36,6 +43,8 @@
 
         const LEFT_KEY = 65;
         const RIGHT_KEY = 68;
+        
+        const SPACE_KEY = 32;
 
         var leftkeyPressed = false;
         var rightkeyPressed = false;
@@ -56,7 +65,8 @@
                 startingPos = false;
             }
 
-            colorRect(playerXpos, playerYpos, PlAYER_SIZE, PlAYER_SIZE, 'red'); //the charcter youll be playing in the game
+            colorRect(playerXpos, playerYpos, PlAYER_SIZE, PlAYER_SIZE, 'red');//the charcter youll be playing in the game
+            colorRect(bulletXpos, bulletYpos, BULLET_WIDTH, BULLET_HIGHT, 'white');// bullet
 
             if (startingPos) {
                 startPos();
@@ -64,6 +74,7 @@
                 startingPos = false;
             }
             playerMove();
+            bulletshoot();
         } // end func
 
         function keyPressed(evt) {
@@ -73,6 +84,9 @@
             }
             if (evt.keyCode == RIGHT_KEY) {
                 rightkeyPressed = true;
+            }
+            if (evt.keyCode == SPACE_KEY){
+                shooting = true;
             }
         } //end func
 
@@ -118,7 +132,29 @@
             
         }    
         
+        var shooting = false;
+        var shot = false;
         
+        function bulletshoot(){
+            if(shooting && shot = false){
+               bulletXpos = playerXpos + PlAYER_SIZE / 2 - BULLET_WIDTH / 2; // x center
+               bulletYpos = playerYpos;
+               shot = true
+                
+               }
+            if (shooting && shot){
+                 bulletYpos -= bulletYspeed
+                
+                }
+            if (bulletYpos < 0){
+                 shot = false;
+                 shooting =false
+            }
+            if(shot == false && shooting == false){
+                 bulletXpos = 0;
+                 bulletYpos = 0;
+               }
+        }
 
         function startPos() {
             playerXpos = canvas.width / 2 - PlAYER_SIZE / 2;

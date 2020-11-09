@@ -12,76 +12,103 @@
 
             document.addEventListener('keydown', keyPressed);
             document.addEventListener('keyup', keyReleased);
-            
-            for(var i = 0; i < totalEnemies; i++){
+
+            for (var i = 0; i < totalEnemies; i++) {
                 makeEnemies();
             }
-         
+
 
             setInterval(mainloop, 1000 / 50);
 
         }
-        
-        //bullet
+
+        //bullet vars
         var bulletXpos = 601;
         var bulletYpos = 601;
         const BULLET_WIDTH = 4;
         const BULLET_HIGHT = 6;
         var bulletYspeed = 10;
 
+        // player vars
         var playerXpos = 290;
         var playerYpos = 500;
         const PlAYER_SIZE = 50;
         var playerXspeed = 5;
         var playerYspeed = 5;
-        
+
         var score = 0;
-        
+
+        //enemy vars
         var enemyXpos = 1;
         var enemyYpos = 1;
         const ENEMY_SIZE = 20;
-        var enemyXspeed= 5;
-        var enemyYspeed= 5;
-        
+        var enemyXspeed = 7;
+        var enemyYspeed = 7;
 
+
+        //movement vars
         const LEFT_KEY = 65;
         const RIGHT_KEY = 68;
-        
+
         const SPACE_KEY = 32;
 
         var leftkeyPressed = false;
         var rightkeyPressed = false;
-        
+
+        //starting vars
         var startingPos = true;
-        
+
+        //total enemies var for array
         var totalEnemies = 10;
-        var enemies = []; 
-        
+        var enemies = [];
+
         var gameRun = true;
-        
+
+        //image var for player
         var ship = new Image();
         ship.src = 'images/ship.png';
-
         
+        var explosion = new Image2();
+        explosion.src = 'image/explosion.jpeg'
+
+        var myGamePiece;
+        var myObstacles = [];
+
+
+        //function startGame() {
+        //  myGamePiece = new component(30, 30, "red", 10, 160);
+        //  myScore = new component("30px", "Consolas", "black", 280, 40, "text");
+        //  myGameArea.start();
+        //}
+
+
+
         function mainloop() { //mainloop were you want stuff on screen.
-            colorRect(0,0,canvas.width,canvas.height,'black');
-            
-//            colorRect(playerXpos, playerYpos, PlAYER_SIZE, PlAYER_SIZE, 'red');//the charcter youll be playing in the game
-            colorRect(bulletXpos, bulletYpos, BULLET_WIDTH, BULLET_HIGHT, 'white');// bullet
-            
-            if (startingPos) {
-                startPos();
-                console.log('here')
-                startingPos = false;
+            if (gameRun) {
+
+                colorRect(0, 0, canvas.width, canvas.height, 'black');
+
+                //            colorRect(playerXpos, playerYpos, PlAYER_SIZE, PlAYER_SIZE, 'red');//the charcter youll be playing in the game
+                colorRect(bulletXpos, bulletYpos, BULLET_WIDTH, BULLET_HIGHT, 'white'); // bullet
+
+                if (startingPos) {
+                    startPos();
+                    console.log('here')
+                    startingPos = false;
+                }
+
+                playerMove();
+                bulletshoot();
+
+                enemiesDraw();
+                enemiesMove();
+                imageDrawing(ship, playerXpos, playerYpos, PlAYER_SIZE, PlAYER_SIZE);
+                imageDrawing(0, 0, canvas.width, canvas.height, explosion)
+            } else {
+                imageDrawing(0, 0, canvas.width, canvas.height, explosion)
+               // colorRect(0, 0, canvas.width, canvas.height, 'red');
             }
-            
-            playerMove();
-            bulletshoot();
-            
-            enemiesDraw();
-            enemiesMove();
-            imageDrawing(ship,playerXpos,playerYpos,PlAYER_SIZE,PlAYER_SIZE);
-            
+
         } // end func
 
         function keyPressed(evt) {
@@ -92,7 +119,7 @@
             if (evt.keyCode == RIGHT_KEY) {
                 rightkeyPressed = true;
             }
-            if (evt.keyCode == SPACE_KEY){
+            if (evt.keyCode == SPACE_KEY) {
                 shooting = true;
             }
         } //end func
@@ -105,72 +132,84 @@
                 rightkeyPressed = false;
             }
         } //end func
-        
-            
 
-        function playerMove() {//player 
-            if (rightkeyPressed) { // rightkeypressed 
+
+
+        function playerMove() { //player 
+            if (rightkeyPressed && playerXpos < canvas.width - PlAYER_SIZE) { // rightkeypressed 
                 playerXpos += playerXspeed;
             }
-            if (leftkeyPressed) { // leftkeyPressed 
+            if (leftkeyPressed && playerXpos > 0) { // leftkeyPressed 
                 playerXpos -= playerXspeed;
             }
 
+
         } // end func
-        
+
         var max = 10;
         var min = 2;
-        
-        function makeEnemies(){
+
+        function makeEnemies() {
             const E_SIZE = 20;
-            var eXpos = Math.floor(Math.random()*(canvas.width - E_SIZE));
+            var eXpos = Math.floor(Math.random() * (canvas.width - E_SIZE));
             var eYpos = 0;
-            var eYspeed = Math.floor(Math.random()*(max - min)) + min;
-            
+            var eYspeed = Math.floor(Math.random() * (max - min)) + min;
+
             var enemy = {
                 eXpos: eXpos,
                 eYpos: eYpos,
                 E_SIZE: E_SIZE,
                 eYspeed: eYspeed
             }
-            
+
             enemies.push(enemy);
         }
-        
-        function enemiesDraw(){
-            enemies.forEach(function(e,i,array){
-                colorRect(e.eXpos,e.eYpos,e.E_SIZE,e.E_SIZE,'gray');
+
+        function enemiesDraw() {
+            enemies.forEach(function(e, i, array) {
+                colorRect(e.eXpos, e.eYpos, e.E_SIZE, e.E_SIZE, 'gray');
             });
         }
-        
-        function enemiesMove(){
-             enemies.forEach(function(e,i,array){
+
+        function enemiesMove() {
+            enemies.forEach(function(e, i, array) {
                 e.eYpos += e.eYspeed;
+
+                if (e.eYpos > canvas.height) {
+                    e.eYpos = 0 - e.E_SIZE
+                    e.eXpos = Math.floor(Math.random() * (canvas.width - e.E_SIZE));
+                    e.eYspeed = Math.floor(Math.random() * (12 - 5)) + 5;
+                    score++;
+                    console.log(score)
+                }
+                if (playerXpos + PlAYER_SIZE > e.eXpos && playerXpos < e.eXpos + e.E_SIZE && playerYpos + PlAYER_SIZE > e.eYpos && playerYpos < e.eYpos + e.E_SIZE) {
+                    gameRun = false;
+                }
             });
         }
-        
+
         var shooting = false;
         var shot = false;
-        
-        function bulletshoot(){
-            if(shooting && shot == false){
-               bulletXpos = playerXpos + PlAYER_SIZE / 2 - BULLET_WIDTH / 2; // x center
-               bulletYpos = playerYpos;
-               shot = true //bullet size and function
-                
-               }
-            if (shooting && shot){
-                 bulletYpos -= bulletYspeed
-                
-                }
-            if (bulletYpos < 0 || bulletXpos + BULLET_WIDTH > enemyXpos && bulletXpos < enemyXpos + ENEMY_SIZE && bulletYpos + BULLET_HIGHT > enemyYpos && bulletYpos < enemyYpos + ENEMY_SIZE){
-                 shot = false;
-                 shooting =false
+
+        function bulletshoot() {
+            if (shooting && shot == false) {
+                bulletXpos = playerXpos + PlAYER_SIZE / 2 - BULLET_WIDTH / 2; // x center
+                bulletYpos = playerYpos;
+                shot = true //bullet size and function
+
             }
-            if(shot == false && shooting == false){
-                 bulletXpos = 0;
-                 bulletYpos = 0;
-               }
+            if (shooting && shot) {
+                bulletYpos -= bulletYspeed
+
+            }
+            if (bulletYpos < 0 || bulletXpos + BULLET_WIDTH > enemyXpos && bulletXpos < enemyXpos + ENEMY_SIZE && bulletYpos + BULLET_HIGHT > enemyYpos && bulletYpos < enemyYpos + ENEMY_SIZE) {
+                shot = false;
+                shooting = false
+            }
+            if (shot == false && shooting == false) {
+                bulletXpos = 0;
+                bulletYpos = 0;
+            }
         } // end func
 
         function startPos() {
@@ -182,19 +221,17 @@
             canvasContext.fillStyle = c;
             canvasContext.fillRect(x, y, w, h);
         }
-        
-        function imageDrawing(src,x,y,w,h){
-            	canvasContext.drawImage(src,x,y,w,h);
+
+        function imageDrawing(src, x, y, w, h) {
+            canvasContext.drawImage(src, x, y, w, h);
 
         }
-        
-        function colorText(msg,x,y,f,c){
+
+        function colorText(msg, x, y, f, c) {
             canvasContext.fillStyle = c;
             canvasContext.font = f;
-            canvasContext.fillText(msg,x,y);
+            canvasContext.fillText(msg, x, y);
         }
-        
-        
 
     </script>
 </body>

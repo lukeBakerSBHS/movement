@@ -37,6 +37,10 @@
         var playerYspeed = 5;
 
         var score = 0;
+        
+        var difficulty = '';
+        
+        
 
         //enemy vars
         var enemyXpos = 1;
@@ -68,9 +72,7 @@
         var ship = new Image();
         ship.src = 'images/ship.png';
         
-        var explosion = new Image2();
-        explosion.src = 'image/explosion.jpeg'
-
+        
         var myGamePiece;
         var myObstacles = [];
 
@@ -87,9 +89,11 @@
             if (gameRun) {
 
                 colorRect(0, 0, canvas.width, canvas.height, 'black');
+                colorRect(bulletXpos, bulletYpos, BULLET_WIDTH, BULLET_HIGHT, 'white'); // bullet
+                drawText('20px Arial','Score: '+score,470,45,'white');
+                
 
                 //            colorRect(playerXpos, playerYpos, PlAYER_SIZE, PlAYER_SIZE, 'red');//the charcter youll be playing in the game
-                colorRect(bulletXpos, bulletYpos, BULLET_WIDTH, BULLET_HIGHT, 'white'); // bullet
 
                 if (startingPos) {
                     startPos();
@@ -103,15 +107,17 @@
                 enemiesDraw();
                 enemiesMove();
                 imageDrawing(ship, playerXpos, playerYpos, PlAYER_SIZE, PlAYER_SIZE);
-                imageDrawing(0, 0, canvas.width, canvas.height, explosion)
             } else {
-                imageDrawing(0, 0, canvas.width, canvas.height, explosion)
+                colorRect(0, 0, canvas.width, canvas.height, 'black');
+                drawText('35px Arial','score:' +score,285,300,'red')
+                
+       
                // colorRect(0, 0, canvas.width, canvas.height, 'red');
             }
 
         } // end func
 
-        function keyPressed(evt) {
+        function keyPressed(evt) {// function for movement and shooting
 
             if (evt.keyCode == LEFT_KEY) {
                 leftkeyPressed = true;
@@ -135,7 +141,7 @@
 
 
 
-        function playerMove() { //player 
+        function playerMove() { //player move to move around
             if (rightkeyPressed && playerXpos < canvas.width - PlAYER_SIZE) { // rightkeypressed 
                 playerXpos += playerXspeed;
             }
@@ -149,7 +155,7 @@
         var max = 10;
         var min = 2;
 
-        function makeEnemies() {
+        function makeEnemies() { // function to make enemys
             const E_SIZE = 20;
             var eXpos = Math.floor(Math.random() * (canvas.width - E_SIZE));
             var eYpos = 0;
@@ -165,13 +171,13 @@
             enemies.push(enemy);
         }
 
-        function enemiesDraw() {
+        function enemiesDraw() { // function to draw the enemy on the screen.
             enemies.forEach(function(e, i, array) {
                 colorRect(e.eXpos, e.eYpos, e.E_SIZE, e.E_SIZE, 'gray');
             });
         }
 
-        function enemiesMove() {
+        function enemiesMove() { // function for the enemys to move down the screen.
             enemies.forEach(function(e, i, array) {
                 e.eYpos += e.eYspeed;
 
@@ -191,11 +197,11 @@
         var shooting = false;
         var shot = false;
 
-        function bulletshoot() {
+        function bulletshoot() { //function for the bullets to shoot.
             if (shooting && shot == false) {
-                bulletXpos = playerXpos + PlAYER_SIZE / 2 - BULLET_WIDTH / 2; // x center
+                bulletXpos = playerXpos + PlAYER_SIZE / 2 - BULLET_WIDTH / 2; // x center.
                 bulletYpos = playerYpos;
-                shot = true //bullet size and function
+                shot = true //bullet size and function.
 
             }
             if (shooting && shot) {
@@ -212,25 +218,30 @@
             }
         } // end func
 
-        function startPos() {
+        function startPos() { // starting pos for the player.
             playerXpos = canvas.width / 2 - PlAYER_SIZE / 2;
             playerYpos = canvas.height * 0.8;
         }
 
-        function colorRect(x, y, w, h, c) {
+        function colorRect(x, y, w, h, c) { // to get the colours of the players,enemy and bullet.
             canvasContext.fillStyle = c;
             canvasContext.fillRect(x, y, w, h);
         }
 
-        function imageDrawing(src, x, y, w, h) {
+        function imageDrawing(src, x, y, w, h) {// to draw the ship for the character.
             canvasContext.drawImage(src, x, y, w, h);
 
         }
 
-        function colorText(msg, x, y, f, c) {
+        function colorText(msg, x, y, f, c) { // part of drawing a image.
             canvasContext.fillStyle = c;
             canvasContext.font = f;
             canvasContext.fillText(msg, x, y);
+        }
+        function drawText(f,msg,x,y,c){ // to draw text for score and the end of game.
+            canvasContext.font = f;
+            canvasContext.fillStyle = c;
+            canvasContext.fillText(msg,x,y);
         }
 
     </script>
